@@ -17,10 +17,7 @@ env/
 .ipynb_checkpoints/
 
 # ===== Data =====
-# Raw MRI data is too large for GitHub (~24.7 GB)
-# Download from: https://www.oasis-brains.org/#data
-data/raw/OAS2_RAW_PART1/
-# Any imaging/derived volumes and checkpoints
+data/
 *.nii
 *.nii.gz
 *.mgz
