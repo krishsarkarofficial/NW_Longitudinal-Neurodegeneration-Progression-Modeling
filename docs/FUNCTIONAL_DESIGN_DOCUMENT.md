@@ -29,26 +29,93 @@ This platform combines:
 
 ```mermaid
 flowchart TD
-    A["Raw T1 MRI Scans<br/>(OASIS-2 Cohort)"] --> B["Phase 0 & 1: Data Ingestion<br/>& SynthSeg Parcellation"]
-    B --> C["56 Regional Brain Volumes<br/>(Normalized by eTIV)"]
-    C --> D["Age-Residualized W-Scores<br/>W = (Vol_obs - Vol_pred) / sigma_control"]
-    
-    E["Structural Connectome<br/>Template Matrix A (56x56)"] --> F["Graph Laplacian L = D - A<br/>Eigendecomposition: L = V diag(lambda) V^T"]
-    
-    D --> G["Phase 3: Network Diffusion Model (NDM)<br/>x(t) = exp(-beta L t) x_0"]
+    %% ==========================================
+    %% STREAM 1: IMAGING PREPROCESSING
+    %% ==========================================
+    subgraph S1["Stream 1: Longitudinal Neuroimaging and Volumetrics"]
+        direction TB
+        A["Raw T1 MRI Scans<br/>(OASIS-2 Cohort)"]:::input
+        B["Phase 0 and 1: Data Ingestion<br/>and SynthSeg Parcellation"]:::input
+        C["56 Regional Brain Volumes<br/>(Normalized by eTIV)"]:::input
+        D["Age-Residualized W-Scores<br/>W = (Vol_obs - Vol_pred) / sigma_control"]:::input
+
+        A --> B
+        B --> C
+        C --> D
+    end
+
+    %% ==========================================
+    %% STREAM 2: STRUCTURAL CONNECTOME
+    %% ==========================================
+    subgraph S2["Stream 2: Structural Connectome and Graph Spectra"]
+        direction TB
+        E["Structural Connectome<br/>Template Matrix A (56x56)"]:::connectome
+        F["Phase 2: Graph Laplacian L = D - A<br/>Eigendecomposition: L = V diag(lambda) V^T"]:::connectome
+
+        E --> F
+    end
+
+    %% ==========================================
+    %% BIOPHYSICAL DIFFUSION & CLINICAL MAPPING
+    %% ==========================================
+    subgraph S3["Biophysical Diffusion and Clinical Phenotyping"]
+        direction TB
+        G["Phase 3: Network Diffusion Model (NDM)<br/>x(t) = exp(-beta L t) x_0"]:::biophysics
+        H["Phase 4: Cognitive Deficit Mapping<br/>Deficit_d = sum(W_i * w_i,d) / sum(w_i,d)"]:::cognitive
+
+        G --> H
+    end
+
+    %% ==========================================
+    %% DEEP LEARNING BENCHMARKING & DIGITAL TWIN
+    %% ==========================================
+    subgraph S4["Deep Learning Benchmarking and Digital Twin"]
+        direction TB
+        I["Phase 5: Deep Learning Suite<br/>Spatio-Temporal Graph Progression Models"]:::dl
+
+        J1["ST-GNN-ODE<br/>Continuous Graph ODE"]:::dl
+        J2["ND-VAE<br/>Physics-Constrained VAE"]:::dl
+        J3["TADM<br/>Diffusion Denoiser"]:::dl
+
+        L["Phase 7: Explainability Layer<br/>Integrated Gradients Node Attribution"]:::twin
+        K["Phase 6: Digital Twin Engine<br/>Autoregressive Rollout and 95% MC Bands"]:::twin
+
+        I --> J1
+        I --> J2
+        I --> J3
+
+        J1 --> L
+        J2 --> K
+    end
+
+    %% ==========================================
+    %% INTERACTIVE WEBGL SIMULATION
+    %% ==========================================
+    subgraph S5["Interactive 3D Deployment"]
+        M["Phase 8: Interactive 3D WebGL Simulator<br/>outputs/digital_twin_3d_simulation.html"]:::webgl
+    end
+
+    %% Cross-Stream Modeling Flows
+    D --> G
     F --> G
-    
-    G --> H["Phase 4: Cognitive Deficit Mapping<br/>Region-to-Domain Weighted Transformation"]
-    
-    D & F --> I["Phase 5: Deep Learning Benchmarking"]
-    I --> J1["ST-GNN-ODE<br/>Continuous Graph ODE"]
-    I --> J2["ND-VAE<br/>Physics-Constrained VAE"]
-    I --> J3["TADM<br/>Diffusion Denoiser"]
-    
-    J2 --> K["Phase 6: Digital Twin Engine<br/>Autoregressive Rollout & Monte-Carlo Bands"]
-    J1 --> L["Phase 7: Explainability Layer<br/>Integrated Gradients Node Attribution"]
-    
-    G & H & K & L --> M["Phase 8: Interactive 3D WebGL Simulator<br/>outputs/digital_twin_3d_simulation.html"]
+
+    D --> I
+    F --> I
+
+    %% Convergence into Interactive Simulator
+    G --> M
+    H --> M
+    L --> M
+    K --> M
+
+    %% Style Classes
+    classDef input fill:#0c4a6e,stroke:#38bdf8,stroke-width:2px,color:#f0f9ff;
+    classDef connectome fill:#312e81,stroke:#818cf8,stroke-width:2px,color:#e0e7ff;
+    classDef biophysics fill:#064e3b,stroke:#34d399,stroke-width:2px,color:#d1fae5;
+    classDef cognitive fill:#78350f,stroke:#fbbf24,stroke-width:2px,color:#fef3c7;
+    classDef dl fill:#881337,stroke:#fb7185,stroke-width:2px,color:#ffe4e6;
+    classDef twin fill:#581c87,stroke:#c084fc,stroke-width:2px,color:#f3e8ff;
+    classDef webgl fill:#7c2d12,stroke:#f59e0b,stroke-width:2px,color:#ffedd5;
 ```
 
 ---
